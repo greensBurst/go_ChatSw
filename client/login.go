@@ -60,10 +60,19 @@ func login(userID string, userPwd string) (err error) {
 	//发送长度
 	n,err := conn.Write(buf) //n是发送了多少字节数据
 	if n != 4 || err != nil {
-		fmt.Println("conn.Write() error:",err)
+		fmt.Println("conn.Write(buf) error:",err)
 		return
 	}
 
 	fmt.Println("客户端发送消息的长度成功:",len(data),"内容:",string(data))
+	
+	//发送消息本身
+	_,err = conn.Write(data) //data即序列化后的Message
+	if err != nil {
+		fmt.Println("conn.Write(data) error:",err)
+		return
+	}
+
+	//这里还需要处理服务器端返回的消息
 	return
 }

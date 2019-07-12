@@ -3,6 +3,7 @@ package public
 const (
 	LoginMesType = "LoginMes"
 	LoginResMesType = "LoginResMes"
+	RegisterMesType = "RegisterMes"
 )
 
 //系统中统一的消息传递格式
@@ -22,4 +23,8 @@ type LoginMes struct {
 type LoginResMes struct {
 	Code int  `json:"code"` //状态码，500:用户未注册;200:登录成功
 	Error string `json:"error"` //返回的错误信息，没有就是nil
+}
+
+type RegisterMes struct {
+	//...
 }

@@ -2,8 +2,8 @@ package main
 import (
 	"fmt"
 	"net"
-	"../../public"
-	"../process"
+	"go_ChatSw/public"
+	"go_ChatSw/server/process"
 	"io"
 )
 

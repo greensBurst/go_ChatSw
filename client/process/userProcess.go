@@ -1,14 +1,20 @@
-package main
+package process
 import (
 	"fmt"
 	"net"
-	"../public"
+	"go_ChatSw/public"
 	"encoding/binary"
 	"encoding/json"
 )
 
+type UserProcess struct {
+	//暂时不需要字段
+}
+
+
+
 //写一个函数，完成登录
-func login(userID string, userPwd string) (err error) {
+func (this *UserProcess) Login(userId string, userPwd string) (err error) {
 
 	//下一步开始定协议
 	// fmt.Println("userId:",userID,"userPWd:",userPwd)
@@ -75,7 +81,7 @@ func login(userID string, userPwd string) (err error) {
 
 	//这里还需要处理服务器端返回的消息
 
-	//自己盲改部分
+	//创建一个实例
 	tf := &public.Transfer {
 		Conn:conn,
 	}
@@ -90,7 +96,17 @@ func login(userID string, userPwd string) (err error) {
 	var loginResMes public.LoginResMes
 	err = json.Unmarshal([]byte(mes.Data),&loginResMes)
 	if loginResMes.Code == 200 {
-		fmt.Println("登录成功")
+		// fmt.Println("登录成功")
+
+		//这里我们还要在客户端启动一个协程
+		//该协程保持和服务器端的通讯
+		//接收服务器的推送并显示在客户端
+		go serverProcessMes(conn)
+
+		//1.显示我们登录成功后的菜单
+		for {
+			ShowMenu()
+		}
 	} else if loginResMes.Code == 500 {
 		fmt.Println(loginResMes.Error)
 	}

@@ -2,7 +2,7 @@ package process2
 import (
 	"fmt"
 	"net"
-	"../../public"
+	"go_ChatSw/public"
 	"encoding/json"
 )
 

@@ -4,6 +4,7 @@ const (
 	LoginMesType = "LoginMes"
 	LoginResMesType = "LoginResMes"
 	RegisterMesType = "RegisterMes"
+	RegisterResMesType = "RegisterResMes"
 )
 
 //系统中统一的消息传递格式
@@ -26,5 +27,10 @@ type LoginResMes struct {
 }
 
 type RegisterMes struct {
-	//...
+	User User `json:"user"` //类型就是User结构体
+}
+
+type RegisterResMes struct {
+	Code int  `json:"code"`  //400用户已占用 200注册成功
+	Error string `json:"error"`
 }

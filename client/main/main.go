@@ -2,10 +2,12 @@ package main
 import (
 	"fmt"
 	"go_ChatSw/client/process"
+	"os"
 )
 
 var userId string
 var userPwd string
+var userName string
 
 func main() {
 	
@@ -13,7 +15,6 @@ func main() {
 	var key string
 
 	//主界面
-	loop:
 	for {
 		fmt.Println("----------欢迎登陆多人聊天系统----------")
 		fmt.Println("             1 登录系统")
@@ -35,9 +36,18 @@ func main() {
 			up.Login(userId,userPwd)
 		case "2":
 			fmt.Println("注册用户")
+			fmt.Print("请输入用户id:")
+			fmt.Scanln(&userId)
+			fmt.Print("请输入用户密码:")
+			fmt.Scanln(&userPwd)
+			fmt.Print("请输入昵称:")
+			fmt.Scanln(&userName)
+			//调用UserProcess 完成注册的请求
+			up := &process.UserProcess {}
+			up.Register(userId,userPwd,userName)
 		case "3":
 			fmt.Println("退出系统")
-			break loop
+			os.Exit(0)
 		default:
 			fmt.Println("输入有误")
 		}

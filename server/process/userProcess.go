@@ -12,6 +12,60 @@ type UserProcess struct {
 	Conn net.Conn
 }
 
+func (this *UserProcess) ServerProcessRegister(mes *public.Message) (err error) {
+
+	var registerMes public.RegisterMes
+	err = json.Unmarshal([]byte(mes.Data),&registerMes)
+	if err != nil {
+		fmt.Println("json.Unmarshal([]byte(mes.Data),&registerMes) error:",err)
+		return
+	}
+
+	var resMes public.Message
+	resMes.Type = public.RegisterResMesType
+
+	var registerResMes public.RegisterResMes
+
+	err = model.MyUserDao.Register(&registerMes.User)
+
+	if err != nil {
+		if err  == model.ERROR_USER_EXISTS {
+			registerResMes.Code = 505
+			registerResMes.Error = model.ERROR_USER_EXISTS.Error()
+		} else {
+			registerResMes.Code = 506
+			registerResMes.Error = "未知错误"
+		}
+	} else {
+		registerResMes.Code = 200
+	}
+
+	data,err := json.Marshal(registerResMes)
+	if err != nil {
+		fmt.Println("json.Marshal(registerResMes) error:",err)
+		return
+	}
+
+	resMes.Data = string(data)
+
+	//5对resMes序列化，准备发送
+	data,err = json.Marshal(resMes)
+	if err != nil {
+		fmt.Println("json.Marshal(resMes) error:",err)
+		return
+	}
+
+	//6发送data 我们将其封装到writePkg函数中
+	//因为使用分层模式(mvc)，我们先创建一个Tranfer实例，然后读取
+	tf := &public.Transfer {
+		Conn:this.Conn,
+	}
+	err = tf.WritePkg(data)
+	return
+
+}
+
+
 
 //编写一个函数serverProcessLogin,专门处理登录
 func (this *UserProcess) ServerProcessLogin(mes *public.Message) (err error) {

@@ -5,10 +5,75 @@ import (
 	"go_ChatSw/public"
 	"encoding/binary"
 	"encoding/json"
+	"os"
 )
 
 type UserProcess struct {
 	//暂时不需要字段
+}
+
+
+func (this *UserProcess) Register(userId string,
+	userPwd string,userName string) (err error) {
+
+	//1.连接到服务器
+	conn,err := net.Dial("tcp","0.0.0.0:8889")
+	if err != nil {
+		fmt.Println("net.Dial() error:",err)
+		return
+	}
+	defer conn.Close()
+
+	//2.连接成功，准备通过conn发送消息给服务器
+	var mes public.Message
+	mes.Type = public.RegisterMesType
+
+
+	var registerMes public.RegisterMes
+	registerMes.User.UserId = userId
+	registerMes.User.UserPwd = userPwd
+	registerMes.User.UserName = userName
+
+	data,err := json.Marshal(registerMes)
+	if err != nil {
+		fmt.Println("registerMes json.Marshal() error:",err)
+		return
+	}
+
+	mes.Data = string(data)
+
+	data,err = json.Marshal(mes)
+	if err != nil {
+		fmt.Println("mes json.Marshal() error:",err)
+		return
+	}
+
+	tf := &public.Transfer {
+		Conn:conn,
+	}
+
+	//发送data给服务器
+	err = tf.WritePkg(data)
+	if err != nil {
+		fmt.Println("注册发送信息出错:",err)
+	}
+
+	mes,err = tf.ReadPkg()
+	if err != nil {
+		fmt.Println("public.ReadPkg(conn) error:",err)
+		return
+	}
+
+	var registerResMes public.RegisterResMes
+	err = json.Unmarshal([]byte(mes.Data),&registerResMes)
+	if registerResMes.Code == 200 {
+		fmt.Println("注册成功")
+		os.Exit(0)
+	} else {
+		fmt.Println(registerResMes.Error)
+		os.Exit(0)
+	}
+	return
 }
 
 

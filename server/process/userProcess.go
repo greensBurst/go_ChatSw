@@ -4,6 +4,8 @@ import (
 	"net"
 	"go_ChatSw/public"
 	"encoding/json"
+	"go_ChatSw/server/model"
+
 )
 
 type UserProcess struct {
@@ -29,15 +31,37 @@ func (this *UserProcess) ServerProcessLogin(mes *public.Message) (err error) {
 	//2在声明一个LoginResMes，并完成赋值
 	var loginResMes public.LoginResMes
 
-	//如果用户的id为100，密码为123456，认为是正确的
-	if loginMes.UserId == "100" && loginMes.UserPwd == "123456" {
-		//合法
-		loginResMes.Code = 200
+	//我们需要到redis数据库去完成验证
+	//1.使用model.MyUserDao到redis取验证
+	user,err := model.MyUserDao.Login(loginMes.UserId,loginMes.UserPwd)
+	if err != nil {
+		if err == model.ERROR_USER_NOTEXISTS {
+			loginResMes.Code = 500 //500状态码表示用户不存在
+			loginResMes.Error = err.Error()	
+		} else if err == model.ERROR_USER_PWD {
+			loginResMes.Code = 403 
+			loginResMes.Error = err.Error()
+		} else {
+			loginResMes.Code = 505 
+			loginResMes.Error = "服务器内部错误"
+		}
+
 	} else {
-		//不合法
-		loginResMes.Code = 500 //500状态码表示用户不存在
-		loginResMes.Error = "该用户不存在"
+		loginResMes.Code = 200
+		fmt.Println(user,"登录成功")
 	}
+
+
+
+	//如果用户的id为100，密码为123456，认为是正确的
+	// if loginMes.UserId == "100" && loginMes.UserPwd == "123456" {
+	// 	//合法
+	// 	loginResMes.Code = 200
+	// } else {
+	// 	//不合法
+	// 	loginResMes.Code = 500 //500状态码表示用户不存在
+	// 	loginResMes.Error = "该用户不存在"
+	// }
 
 	//3将loginResMes序列化
 	data,err := json.Marshal(loginResMes)

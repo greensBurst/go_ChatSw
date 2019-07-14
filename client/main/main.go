@@ -13,6 +13,7 @@ func main() {
 	var key string
 
 	//主界面
+	loop:
 	for {
 		fmt.Println("----------欢迎登陆多人聊天系统----------")
 		fmt.Println("             1 登录系统")
@@ -36,6 +37,7 @@ func main() {
 			fmt.Println("注册用户")
 		case "3":
 			fmt.Println("退出系统")
+			break loop
 		default:
 			fmt.Println("输入有误")
 		}

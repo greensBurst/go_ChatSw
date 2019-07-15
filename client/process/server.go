@@ -4,6 +4,7 @@ import (
 	"os"
 	"go_ChatSw/public"
 	"net"
+	"encoding/json"
 )
 
 //显示登录成功后的界面..
@@ -18,7 +19,8 @@ func ShowMenu() {
 	fmt.Scanln(&key)
 	switch key {
 	case "1":
-		fmt.Println("显示在线用户列表")
+		// fmt.Println("显示在线用户列表")
+		outputOnlineUser()
 	case "2":
 		fmt.Println("发送消息")
 	case "3":
@@ -46,6 +48,17 @@ func serverProcessMes(conn net.Conn) {
 		}
 
 		//如果读取到消息，又是下一步处理逻辑
+		switch mes.Type {
+		case public.NotifyUserStatusMesType:
+			//有人上线了
+			//1.取出NotifyUserStatusMes
+			var notifyUserStatusMes public.NotifyUserStatusMes
+			json.Unmarshal([]byte(mes.Data),&notifyUserStatusMes)
+			//2.把这个用户的信息，状态保存到客户端的map中
+			updateUserStatus(&notifyUserStatusMes)
+		default:
+			fmt.Println("服务器端返回了一个未知消息")
+		}
 		fmt.Println(mes)
 	}
 }

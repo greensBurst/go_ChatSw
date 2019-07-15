@@ -5,7 +5,17 @@ const (
 	LoginResMesType = "LoginResMes"
 	RegisterMesType = "RegisterMes"
 	RegisterResMesType = "RegisterResMes"
+	NotifyUserStatusMesType = "NotifyUserStatusMes"
 )
+
+//定义用户状态常量
+const (
+	UserOnline = iota	//这个是0，后面递增
+	UserOffline
+	UserBusyStatus
+)
+
+
 
 //系统中统一的消息传递格式
 type Message struct {
@@ -23,6 +33,7 @@ type LoginMes struct {
 //登陆过后服务端返回的消息
 type LoginResMes struct {
 	Code int  `json:"code"` //状态码，500:用户未注册;200:登录成功
+	UsersId []string
 	Error string `json:"error"` //返回的错误信息，没有就是nil
 }
 
@@ -33,4 +44,10 @@ type RegisterMes struct {
 type RegisterResMes struct {
 	Code int  `json:"code"`  //400用户已占用 200注册成功
 	Error string `json:"error"`
+}
+
+//为了配合服务器端推送用户状态变化的消息
+type NotifyUserStatusMes struct {
+	UserId string `json:"userId"`
+	Status int `json:"status"`
 }

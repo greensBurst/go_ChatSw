@@ -8,4 +8,5 @@ type User struct {
 	UserId string	`json:"userId"`
 	UserPwd string	`json:"UserPwd"`
 	UserName string	`Json:"UserName"`
+	UserStatus int `json:"userStatus"`
 }

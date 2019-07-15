@@ -163,6 +163,20 @@ func (this *UserProcess) Login(userId string, userPwd string) (err error) {
 	if loginResMes.Code == 200 {
 		// fmt.Println("登录成功")
 
+		//现在可以显示一下当前在线用户列表，遍历loginResMes.UsersId
+		fmt.Println("当前在线用户列表:")
+		for _,v := range loginResMes.UsersId {
+			fmt.Println("用户id:\t",v)
+
+			//完成onlineUsers初始化
+			user := &public.User {
+				UserId:v,
+				UserStatus:public.UserOnline,
+			}
+			onlineUsers[v] = user
+		}
+		fmt.Print("\n\n")
+
 		//这里我们还要在客户端启动一个协程
 		//该协程保持和服务器端的通讯
 		//接收服务器的推送并显示在客户端

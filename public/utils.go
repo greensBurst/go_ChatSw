@@ -15,7 +15,7 @@ type Transfer struct {
 
 
 func (this *Transfer) ReadPkg() (mes Message,err error){
-	fmt.Println("等待读取对方发送的数据")
+	// fmt.Println("等待读取对方发送的数据")
 	_,err = this.Conn.Read(this.Buf[:4])
 	if err != nil {
 		// fmt.Println("conn.Read(1) error:",err)

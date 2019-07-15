@@ -135,7 +135,7 @@ func (this *UserProcess) Login(userId string, userPwd string) (err error) {
 		return
 	}
 
-	fmt.Println("客户端发送消息的长度成功:",len(data),"内容:",string(data))
+	// fmt.Println("客户端发送消息的长度成功:",len(data),"内容:",string(data))
 	
 	//发送消息本身
 	_,err = conn.Write(data) //data即序列化后的Message
@@ -161,6 +161,12 @@ func (this *UserProcess) Login(userId string, userPwd string) (err error) {
 	var loginResMes public.LoginResMes
 	err = json.Unmarshal([]byte(mes.Data),&loginResMes)
 	if loginResMes.Code == 200 {
+
+		//初始化CurUser
+		CurUser.Conn = conn
+		CurUser.UserId = userId
+		CurUser.UserStatus = public.UserOnline
+
 		// fmt.Println("登录成功")
 
 		//现在可以显示一下当前在线用户列表，遍历loginResMes.UsersId

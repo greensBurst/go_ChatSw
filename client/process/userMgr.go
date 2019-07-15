@@ -2,10 +2,12 @@ package process
 import (
 	"fmt"
 	"go_ChatSw/public"
+	"go_ChatSw/client/model"
 )
 
 //客户端要维护的map
 var onlineUsers map[string]*public.User = make(map[string]*public.User,10)
+var CurUser model.CurUser  //在用户登录成功后完成初始化
 
 //在客户端显示当前在线的用户
 func outputOnlineUser() {
